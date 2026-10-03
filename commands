@@ -1,0 +1,5 @@
+rustfs server \
+  "$HOME/rustfs/data" \
+  --address "127.0.0.1:9000" \
+  --console-enable \
+  --console-address "127.0.0.1:9001"
