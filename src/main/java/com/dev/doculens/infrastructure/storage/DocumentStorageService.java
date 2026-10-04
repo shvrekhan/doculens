@@ -2,13 +2,9 @@ package com.dev.doculens.infrastructure.storage;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-
-import java.io.IOException;
-import java.util.UUID;
 
 @Service
 public class DocumentStorageService {
@@ -22,42 +18,18 @@ public class DocumentStorageService {
         this.s3Client = s3Client;
     }
 
-    public void upload(String fileName, byte[] content) {
-
-        PutObjectRequest request = PutObjectRequest.builder()
+    public void upload(String key, byte[] content, String contentType) {
+        PutObjectRequest.Builder requestBuilder = PutObjectRequest.builder()
                 .bucket(bucket)
-                .key(fileName)
-                .build();
+                .key(key);
+
+        if (contentType != null && !contentType.isBlank()) {
+            requestBuilder.contentType(contentType);
+        }
 
         s3Client.putObject(
-                request,
+                requestBuilder.build(),
                 RequestBody.fromBytes(content)
         );
-    }
-
-    public String upload(MultipartFile invoice) {
-
-        String fileName = "invoices/"+ UUID.randomUUID() +"/"+invoice.getOriginalFilename();
-
-        PutObjectRequest request = PutObjectRequest.builder()
-                .bucket(bucket)
-                .key(fileName)
-                .contentType(invoice.getContentType())
-                .build();
-
-        try {
-            s3Client.putObject(
-                    request,
-                    RequestBody.fromInputStream(
-                            invoice.getInputStream(),
-                            invoice.getSize()
-                    )
-            );
-
-            return fileName;
-
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to upload invoice", e);
-        }
     }
 }
