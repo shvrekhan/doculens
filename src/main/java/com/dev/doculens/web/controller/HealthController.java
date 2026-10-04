@@ -1,4 +1,4 @@
-package com.dev.doculens.controller;
+package com.dev.doculens.web.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
