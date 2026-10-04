@@ -1,6 +1,7 @@
 package com.dev.doculens.application.service;
 
 import com.dev.doculens.infrastructure.storage.DocumentStorageService;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,7 +16,8 @@ public class DocumentService {
         this.storageService = storageService;
     }
 
-    public void uploadDocuments(List<MultipartFile> files) {
-        files.forEach(storageService::upload);
+    @Async("DocUploadThreadPool")
+    public void uploadDocuments(MultipartFile files) {
+        System.out.println(Thread.currentThread().getName());
     }
 }

@@ -1,5 +1,7 @@
 package com.dev.doculens.web.controller;
 
+import com.dev.doculens.application.dto.response.BaseResponse;
+import com.dev.doculens.application.service.DocumentService;
 import com.dev.doculens.infrastructure.storage.DocumentStorageService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,16 +16,20 @@ import java.util.List;
 public class UploadDocumentController {
 
     private final DocumentStorageService storageService;
+    private final DocumentService documentService;
 
-    public UploadDocumentController(DocumentStorageService storageService) {
+    public UploadDocumentController(
+            DocumentStorageService storageService,
+            DocumentService documentService
+    ) {
         this.storageService = storageService;
+        this.documentService = documentService;
     }
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> uploadInvoice(@RequestParam("invoice") List<MultipartFile> invoice) {
-        invoice.forEach(storageService::upload);
-        return ResponseEntity.ok(
-                "Invoice uploaded successfully: "
-        );
+    public ResponseEntity<BaseResponse> uploadInvoice(@RequestParam("invoice") List<MultipartFile> invoice) {
+        invoice.forEach(documentService::uploadDocuments);
+
+        return ResponseEntity.ok(new BaseResponse("QUEUED","Invoice Queued Successfully."));
     }
 }
